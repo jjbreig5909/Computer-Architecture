@@ -7,6 +7,7 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
+        self.running = True
         pass
 
     def load(self):
@@ -62,7 +63,10 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+        running = True
+
+        while running:
+            command = 
     def ram_read(self):
 
         pass
