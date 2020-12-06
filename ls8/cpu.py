@@ -7,7 +7,15 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        self.running = True
+        self.running = False
+        self.ram = [00000000] * 256
+        self.pc = 0
+        self.reg = [0] * 8
+
+        #Commands - these come from the list below
+        self.HLT = 0b00000001
+        self.PRN = 0b01000111
+        self.LDI = 0b10000010
         pass
 
     def load(self):
@@ -63,14 +71,39 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        running = True
+        self.running = True
+        self.pc = 0
 
-        while running:
-            command = 
-    def ram_read(self):
+        while self.running:
+            ir = self.ram_read(self.pc)
+            operand_a = self.ram_read(self.pc + 1)
+            operand_b = self.ram_read(self.pc + 2)
 
-        pass
+            if ir == self.LDI:
+                reg = operand_a
+                val = operand_b
+                self.reg[reg] = val
+                self.pc += 1
+            
+            elif ir == self.PRN:
+                reg = self.ram[self.pc + 1]
+                print(self.reg[reg])
+                self.pc += 1 
+            
+            elif ir == self.HLT:
+                self.running = False 
+                self.pc += 1
+
+            else:
+                print("Wrong instruction or address: ", ir, self.pc)
+                raise ValueError
+
+        
+    def ram_read(self, MAR):    #MAR = Memory Address Register
+        MDR = self.ram[MAR]     #MDR = Memory Data Register
+        return MDR
+        
     
-    def ram_write(self):
-
-        pass
+    def ram_write(self, MAR, MDR):
+        self.ram[MAR] = MDR
+    
