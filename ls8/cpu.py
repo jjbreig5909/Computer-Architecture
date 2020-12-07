@@ -68,14 +68,24 @@ class CPU:
             print(" %02X" % self.reg[i], end='')
 
         print()
+    
+    def ram_read(self, MAR):    #MAR = Memory Address Register
+        MDR = self.ram[MAR]     #MDR = Memory Data Register
+        return MDR
+        
+    
+    def ram_write(self, MAR, MDR):
+        self.ram[MAR] = MDR
 
     def run(self):
         """Run the CPU."""
         self.running = True
         self.pc = 0
+        self.trace()
 
         while self.running:
             ir = self.ram_read(self.pc)
+            print("This is IR:", ir)
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
 
@@ -95,15 +105,10 @@ class CPU:
                 self.pc += 1
 
             else:
-                print("Wrong instruction or address: ", ir, self.pc)
-                raise ValueError
+                self.pc += 1
+                # print("Wrong instruction or address: ", ir, self.pc)
+                # raise ValueError
 
         
-    def ram_read(self, MAR):    #MAR = Memory Address Register
-        MDR = self.ram[MAR]     #MDR = Memory Data Register
-        return MDR
-        
-    
-    def ram_write(self, MAR, MDR):
-        self.ram[MAR] = MDR
+
     
