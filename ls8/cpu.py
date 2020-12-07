@@ -16,6 +16,7 @@ class CPU:
         self.HLT = 0b00000001
         self.PRN = 0b01000111
         self.LDI = 0b10000010
+        self.MUL = 0b10100010
         pass
 
     def load(self):
@@ -103,6 +104,10 @@ class CPU:
             elif ir == self.HLT:
                 self.running = False 
                 self.pc += 1
+
+            elif ir == self.MUL:
+                self.alu('MUL', self.pc+1, self.pc+2)
+                self.pc += 3
 
             else:
                 self.pc += 1
