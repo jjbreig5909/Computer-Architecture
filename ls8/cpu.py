@@ -17,28 +17,20 @@ class CPU:
         self.PRN = 0b01000111
         self.LDI = 0b10000010
         self.MUL = 0b10100010
+        self.NOP = 0b00000000
         pass
 
-    def load(self):
+    def load(self, f):
         """Load a program into memory."""
 
+        file_path = f
+        program = open(f"{file_path}", "r")
         address = 0
-
-        # For now, we've just hardcoded a program:
-
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
-        ]
-
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+        for line in program:
+            if line[0] ==  "0" or line[0] == "1":
+                command = line.split('#', 1)[0]
+                self.ram[address] = int(command, 2)
+                address += 1
 
 
     def alu(self, op, reg_a, reg_b):
@@ -47,6 +39,8 @@ class CPU:
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
         #elif op == "SUB": etc
+        elif op == "MUL":
+            self.reg[self.ram[reg_a]] *= self.reg[self.ram[reg_b]]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -94,12 +88,12 @@ class CPU:
                 reg = operand_a
                 val = operand_b
                 self.reg[reg] = val
-                self.pc += 1
+                self.pc += 3
             
             elif ir == self.PRN:
                 reg = self.ram[self.pc + 1]
                 print(self.reg[reg])
-                self.pc += 1 
+                self.pc += 2
             
             elif ir == self.HLT:
                 self.running = False 
@@ -108,11 +102,14 @@ class CPU:
             elif ir == self.MUL:
                 self.alu('MUL', self.pc+1, self.pc+2)
                 self.pc += 3
+            
+            elif ir == self.NOP:
+                self.pc += 1
 
             else:
-                self.pc += 1
-                # print("Wrong instruction or address: ", ir, self.pc)
-                # raise ValueError
+                # self.pc += 1
+                print("Wrong instruction or address: ", ir, self.pc)
+                raise ValueError
 
         
 
