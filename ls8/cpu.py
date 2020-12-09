@@ -11,14 +11,24 @@ class CPU:
         self.ram = [00000000] * 256
         self.pc = 0
         self.reg = [0] * 8
-
+        self.sp = 7
         #Commands - these come from the list below
-        self.HLT = 0b00000001
-        self.PRN = 0b01000111
-        self.LDI = 0b10000010
-        self.MUL = 0b10100010
-        self.NOP = 0b00000000
-        pass
+    def call_stack(self, func):
+        branch_table = {
+            0b00000001 : self.HLT,
+            0b01000111 : self.PRN,
+            0b10000010 : self.LDI,
+            0b10100010 : self.MUL,
+            0b00000000 : self.NOP,
+            0b01000101: self.PUSH,
+            0b01000110: self.POP,
+        }
+        
+        if func in branch_table:
+            branch_table[func]()
+        else:
+            print('Unknown function')
+            sys.exit(1)
 
     def load(self, f):
         """Load a program into memory."""
