@@ -19,7 +19,7 @@ class CPU:
             0b01000111 : self.PRN,
             0b10000010 : self.LDI,
             0b10100010 : self.MUL,
-            0b00000000 : self.NOP,
+            # 0b00000000 : self.NOP,
             0b01000101: self.PUSH,
             0b01000110: self.POP,
         }
@@ -85,41 +85,12 @@ class CPU:
     def run(self):
         """Run the CPU."""
         self.running = True
-        self.pc = 0
-        self.trace()
 
         while self.running:
             ir = self.ram_read(self.pc)
             print("This is IR:", ir)
-            operand_a = self.ram_read(self.pc + 1)
-            operand_b = self.ram_read(self.pc + 2)
+            self.call_stack(ir)
 
-            if ir == self.LDI:
-                reg = operand_a
-                val = operand_b
-                self.reg[reg] = val
-                self.pc += 3
-            
-            elif ir == self.PRN:
-                reg = self.ram[self.pc + 1]
-                print(self.reg[reg])
-                self.pc += 2
-            
-            elif ir == self.HLT:
-                self.running = False 
-                self.pc += 1
-
-            elif ir == self.MUL:
-                self.alu('MUL', self.pc+1, self.pc+2)
-                self.pc += 3
-            
-            elif ir == self.NOP:
-                self.pc += 1
-
-            else:
-                # self.pc += 1
-                print("Wrong instruction or address: ", ir, self.pc)
-                raise ValueError
     def LDI(self):
         reg = self.ram_read(self.pc+1)
         val = self.ram_read(self.pc+2)
@@ -151,7 +122,7 @@ class CPU:
         self.reg[self.ram[self.pc + 1]] = value
         self.sp += 1
         self.pc += 2
-        
+
         
 
     
