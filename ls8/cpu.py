@@ -120,7 +120,38 @@ class CPU:
                 # self.pc += 1
                 print("Wrong instruction or address: ", ir, self.pc)
                 raise ValueError
+    def LDI(self):
+        reg = self.ram_read(self.pc+1)
+        val = self.ram_read(self.pc+2)
+        self.reg[reg] = val
+        self.pc += 3
 
+    def PRN(self):
+        reg = self.ram[self.pc + 1]
+        print(self.reg[reg])
+        self.pc += 2
+    
+    def HLT(self):
+        self.running = False
+        self.pc += 1
+    
+    def MUL(self):
+        self.alu('MUL', self.pc+1, self.pc+2)
+        self.pc += 3
+
+    def PUSH(self):
+        self.sp -=1
+        reg_num = self.ram[self.pc + 1]
+        value = self.reg[reg_num]
+        self.ram[self.sp] = value
+        self.pc += 2
+
+    def POP(self):
+        value = self.ram[self.sp]
+        self.reg[self.ram[self.pc + 1]] = value
+        self.sp += 1
+        self.pc += 2
+        
         
 
     
